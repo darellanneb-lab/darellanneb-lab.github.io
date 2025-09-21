@@ -1,7 +1,7 @@
-# Hi there! 👋 I'm Darell Anne V. Bersamira
+# Hi there! 👋 I'm Darell Ann V. Bersamira
 
 ## 🎓 About Me
-- **Name**: Darell Anne V. Bersamira
+- **Name**: Darell Ann V. Bersamira
 - **Program**: Bachelor of Science in Information Technology (4th Year)
 - **Specialization**: Web Development
 - **Current Status**: BSIT4 Student passionate about creating innovative web solutions
