@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darell-Ann Bersamira | Portfolio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Cyberpunk Grid Background */
+        .grid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            z-index: -2;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Neon Orbs */
+        .neon-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: float 6s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .orb1 {
+            top: 20%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #ff0080, transparent);
+            animation-delay: 0s;
+        }
+
+        .orb2 {
+            top: 60%;
+            right: 15%;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, #00ff80, transparent);
+            animation-delay: 2s;
+        }
+
+        .orb3 {
+            bottom: 20%;
+            left: 20%;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #8000ff, transparent);
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .header-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .glitch-text {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            position: relative;
+            animation: glitch 2s infinite;
+        }
+
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch-text::before {
+            color: #ff0080;
+            animation: glitch-1 0.5s infinite;
+        }
+
+        .glitch-text::after {
+            color: #00ff80;
+            animation: glitch-2 0.5s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            10% { transform: translate(-2px, 2px); }
+            20% { transform: translate(2px, -2px); }
+            30% { transform: translate(-2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            50% { transform: translate(-2px, 2px); }
+            60% { transform: translate(2px, -2px); }
+            70% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+        }
+
+        @keyframes glitch-1 {
+            0% { clip: rect(132px, 9999px, 101px, 0); }
+            25% { clip: rect(74px, 9999px, 12px, 0); }
+            50% { clip: rect(83px, 9999px, 63px, 0); }
+            75% { clip: rect(20px, 9999px, 150px, 0); }
+            100% { clip: rect(91px, 9999px, 81px, 0); }
+        }
+
+        @keyframes glitch-2 {
+            0% { clip: rect(129px, 9999px, 36px, 0); }
+            25% { clip: rect(36px, 9999px, 148px, 0); }
+            50% { clip: rect(85px, 9999px, 96px, 0); }
+            75% { clip: rect(15px, 9999px, 142px, 0); }
+            100% { clip: rect(147px, 9999px, 44px, 0); }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #00ff80;
+            margin: 20px 0 40px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            animation: neonGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonGlow {
+            from {
+                text-shadow: 0 0 10px #00ff80, 0 0 20px #00ff80, 0 0 30px #00ff80;
+            }
+            to {
+                text-shadow: 0 0 5px #00ff80, 0 0 10px #00ff80, 0 0 15px #00ff80;
+            }
+        }
+
+        /* Navigation Cards */
+        .nav-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .nav-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-card:hover::before {
+            left: 100%;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: #00ff80;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(0, 255, 255, 0.2);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .card-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #00ff80;
+        }
+
+        .card-desc {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        /* Animated Binary Rain */
+        .binary-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .binary-column {
+            position: absolute;
+            color: #00ff80;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            animation: rain linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes rain {
+            0% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 0 15px;
+            }
+            
+            .nav-card {
+                padding: 25px 20px;
+            }
+            
+            .glitch-text {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeOut 1s ease-out 2s forwards;
+        }
+
+        .loader-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: #00ff80;
+            animation: loadingPulse 1s infinite;
+        }
+
+        @keyframes loadingPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader">
+        <div class="loader-text">INITIALIZING...</div>
+    </div>
+
+    <!-- Binary Rain Effect -->
+    <div class="binary-rain" id="binaryRain"></div>
+
+    <!-- Grid Background -->
+    <div class="grid-background"></div>
+
+    <!-- Neon Orbs -->
+    <div class="neon-orb orb1"></div>
+    <div class="neon-orb orb2"></div>
+    <div class="neon-orb orb3"></div>
+
+    <!-- Main Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="glitch-text" data-text="DARELL-ANN">DARELL-ANN</h1>
+            <p class="subtitle">INFORMATION TECHNOLOGY STUDENT</p>
+            
+            <div class="nav-container">
+                <a href="darell.html" class="nav-card">
+                    <span class="card-icon">📋</span>
+                    <h3 class="card-title">RESUME</h3>
+                    <p class="card-desc">Professional profile and qualifications</p>
+                </a>
+                
+                <a href="gallery.html" class="nav-card">
+                    <span class="card-icon">🎨</span>
+                    <h3 class="card-title">GALLERY</h3>
+                    <p class="card-desc">Visual showcase and portfolio</p>
+                </a>
+                
+               
+            </div>
+        </div>
+    </header>
+
+    <script>
+        // Binary Rain Effect
+        function createBinaryRain() {
+            const container = document.getElementById('binaryRain');
+            const characters = '01';
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.className = 'binary-column';
+                column.style.left = (i * 20) + 'px';
+                column.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                column.style.animationDelay = Math.random() * 2 + 's';
+                
+                let text = '';
+                for (let j = 0; j < 20; j++) {
+                    text += characters[Math.floor(Math.random() * characters.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                
+                container.appendChild(column);
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            createBinaryRain();
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add click sound effect (optional)
+        document.querySelectorAll('.nav-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // You can add sound effect here if desired
+            });
+        });
+    </script>
+</body>
+</html>
