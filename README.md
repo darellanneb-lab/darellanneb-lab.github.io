@@ -59,10 +59,10 @@
 ![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=yourusername&layout=compact&theme=radical)
 
 ## 🔗 Connect With Me
-- **Email**: [your.email@example.com](mailto:your.email@example.com)
-- **LinkedIn**: [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)
-- **Portfolio**: [yourportfolio.com](https://yourportfolio.com)
-- **Twitter**: [@yourusername](https://twitter.com/yourusername)
+- **Email**: (mailto:darellanneb@gmail.com)
+- **LinkedIn**: (https://linkedin.com/in/darell)
+- **Portfolio**: (https://https://github.com/darellanneb-lab)
+- **Twitter**: (https://twitter.com/DARELL)
 
 ## 💡 Fun Facts
 - 🎯 Goal: To become a full-stack developer and contribute to meaningful tech projects
