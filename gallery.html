@@ -3,383 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gallery | Darell-Ann Bersamira</title>
-    <link rel="stylesheet" href="css/midterm.css">
-</head>
-<body>
-    <!-- Background Video -->
-    <video class="background-video" autoplay muted loop>
-        <source src="ACT12_BERSAMIRA/P.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    
-    <!-- Video Overlay -->
-    <div class="video-overlay"></div>
-    
-    <!-- Floating Particles -->
-    <div class="particles" id="particles"></div>
-
-    <!-- Header -->
-    <header class="header">
-        <div class="header-container">
-            <a href="index.html" class="logo">GALLERY</a>
-            <div class="nav-buttons">
-                <button class="nav-btn" onclick="toggleAutoplay()" id="autoplayBtn">Pause</button>
-                <button class="nav-btn" onclick="toggleVideo()" id="videoBtn">Pause Video</button>
-                <a href="index.html" class="nav-btn">← Home</a>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <div class="main-container">
-        <h1 class="gallery-title">PHOTO GALLERY</h1>
+    <title>Gallery - Darell-Ann V. Bersamira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#9333ea',
+                        secondary: '#a855f7',
+                        accent: '#c084fc',
+                        dark: '#581c87',
+                        darker: '#3b0764',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #9333ea 0%, #c084fc 50%, #a855f7 100%);
+        }
         
-        <!-- Slideshow Container -->
-        <div class="slideshow-container">
-            <div class="slideshow-wrapper">
-                <!-- Image Counter -->
-                <div class="image-counter">
-                    <span id="currentSlide">1</span> / <span id="totalSlides">20</span>
+        .text-gradient {
+            background: linear-gradient(135deg, #9333ea 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @keyframes morphIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(40px);
+                filter: blur(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        .morph-in {
+            opacity: 0;
+            animation: morphIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        .slide-in-right {
+            opacity: 0;
+            animation: slideInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        .zoom-in {
+            opacity: 0;
+            animation: zoomIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/95 backdrop-blur-lg shadow-lg z-50 border-b border-purple-100 morph-in">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                    <span class="text-2xl font-bold text-gradient">DAB</span>
                 </div>
                 
-                <!-- Progress Bar -->
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-                
-                <!-- Slides -->
-                <div class="slide active" onclick="openFullscreen(0)">
-                    <img src="ACT12_BERSAMIRA/g.jpg" alt="Gallery Image 1" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjZmYwMDZlIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMjYwIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5JbWFnZSAxPC90ZXh0Pgo8L3N2Zz4='">
-                    <div class="slide-content">
-                        <div class="slide-title">Image 1</div>
-                        <div class="slide-description">Beautiful moment captured</div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-gray-700 hover:text-purple-700 hover:border-b-2 hover:border-purple-400 px-3 py-2 text-sm font-semibold transition-all duration-300">Home</a>
+                        <a href="about.html" class="text-gray-700 hover:text-purple-700 hover:border-b-2 hover:border-purple-400 px-3 py-2 text-sm font-semibold transition-all duration-300">About</a>
+                        <a href="portfolio.html" class="text-gray-700 hover:text-purple-700 hover:border-b-2 hover:border-purple-400 px-3 py-2 text-sm font-semibold transition-all duration-300">Portfolio</a>
+                        <a href="gallery.html" class="text-purple-700 border-b-2 border-purple-700 px-3 py-2 text-sm font-bold transition-all duration-300">Gallery</a>
+                        <a href="contact.html" class="text-gray-700 hover:text-purple-700 hover:border-b-2 hover:border-purple-400 px-3 py-2 text-sm font-semibold transition-all duration-300">Contact</a>
                     </div>
                 </div>
+
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-700 hover:text-purple-700 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-purple-100">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded">Home</a>
+                <a href="about.html" class="block px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded">About</a>
+                <a href="portfolio.html" class="block px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded">Portfolio</a>
+                <a href="gallery.html" class="block px-3 py-2 text-purple-700 font-bold bg-purple-50 rounded">Gallery</a>
+                <a href="contact.html" class="block px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="pt-24 pb-12 px-4 gradient-bg relative overflow-hidden">
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style="animation-delay: 2s;"></div>
+        </div>
+        <div class="max-w-6xl mx-auto text-center text-white relative z-10">
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-4 drop-shadow-lg morph-in">My Gallery</h1>
+            <p class="text-xl md:text-2xl text-purple-100 font-semibold slide-in-right delay-200">A collection of memorable moments & videos</p>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <!-- Photo Gallery -->
+            <div class="mb-20">
+                <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-900 scroll-reveal">
+                    Personal <span class="text-gradient">Photos</span>
+                </h2>
                 
-                <!-- Navigation Arrows -->
-                <button class="nav-arrow prev-arrow" onclick="changeSlide(-1)">‹</button>
-                <button class="nav-arrow next-arrow" onclick="changeSlide(1)">›</button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Photo 1 -->
+                    <div class="scroll-reveal group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer aspect-square border-4 border-purple-100 hover:border-purple-400">
+                        <img src="images/1.jpg" alt="Gallery Photo 1" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/500/9333ea/ffffff?text=Your+Photo+1'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                           
+                        </div>
+                    </div>
+
+                    <!-- Photo 2 -->
+                    <div class="scroll-reveal group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer aspect-square border-4 border-purple-100 hover:border-purple-400">
+                        <img src="images/2.jpg" alt="Gallery Photo 2" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/500/a855f7/ffffff?text=Your+Photo+2'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            
+                        </div>
+                    </div>
+
+                    <!-- Photo 3 -->
+                    <div class="scroll-reveal group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer aspect-square border-4 border-purple-100 hover:border-purple-400">
+                        <img src="images/3.jpg" alt="Gallery Photo 3" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/500/c084fc/ffffff?text=Your+Photo+3'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            
+                        </div>
+                    </div>
+
+                    <!-- Photo 4 -->
+                    <div class="scroll-reveal group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer aspect-square border-4 border-purple-100 hover:border-purple-400">
+                        <img src="images/4.jpg" alt="Gallery Photo 4" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/500/d946ef/ffffff?text=Your+Photo+4'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                           
+                        </div>
+                    </div>
+
+                    <!-- Photo 5 -->
+                    <div class="scroll-reveal group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer aspect-square border-4 border-purple-100 hover:border-purple-400">
+                        <img src="images/5.jpg" alt="Gallery Photo 5" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/500/e879f9/ffffff?text=Your+Photo+5'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                           
+                        </div>
+                    </div>
+
+                    <!-- Photo 6 -->
+                    <div class="scroll-reveal group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer aspect-square border-4 border-purple-100 hover:border-purple-400">
+                        <img src="images/6.jpg" alt="Gallery Photo 6" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/500/f0abfc/ffffff?text=Your+Photo+6'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                           
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <!-- Slide Indicators -->
-            <div class="slide-indicators">
-                <!-- Indicators will be generated by JavaScript -->
+
+            <!-- Video Gallery -->
+            <div class="mb-16">
+                <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-900 scroll-reveal">
+                    My <span class="text-gradient">Videos</span>
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Video 1 -->
+                    <div class="scroll-reveal bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border-4 border-purple-100 hover:border-purple-400">
+                        <div class="aspect-video bg-gradient-to-br from-purple-100 to-purple-200 relative">
+                            <video controls class="w-full h-full object-cover" poster="https://via.placeholder.com/800x450/9333ea/ffffff?text=Video+Poster+1">
+                                <source src="videos/1.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-6">
+                        </div>
+                    </div>
+
+                    <!-- Video 2 -->
+                    <div class="scroll-reveal bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border-4 border-purple-100 hover:border-purple-400">
+                        <div class="aspect-video bg-gradient-to-br from-purple-100 to-purple-200 relative">
+                            <video controls class="w-full h-full object-cover" poster="https://via.placeholder.com/800x450/a855f7/ffffff?text=Video+Poster+2">
+                                <source src="videos/2.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-6">
+                        </div>
+                    </div>
+
+                    <!-- Video 3 -->
+                    <div class="scroll-reveal bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border-4 border-purple-100 hover:border-purple-400">
+                        <div class="aspect-video bg-gradient-to-br from-purple-100 to-purple-200 relative">
+                            <video controls class="w-full h-full object-cover" poster="https://via.placeholder.com/800x450/c084fc/ffffff?text=Video+Poster+3">
+                                <source src="videos/3.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-6">
+                        </div>
+                    </div>
+
+                    <!-- Video 4 -->
+                    <div class="scroll-reveal bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border-4 border-purple-100 hover:border-purple-400">
+                        <div class="aspect-video bg-gradient-to-br from-purple-100 to-purple-200 relative">
+                            <video controls class="w-full h-full object-cover" poster="https://via.placeholder.com/800x450/d946ef/ffffff?text=Video+Poster+4">
+                                <source src="videos/4.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-6">
+                        </div>
+                    </div><div class="scroll-reveal bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border-4 border-purple-100 hover:border-purple-400">
+                        <div class="aspect-video bg-gradient-to-br from-purple-100 to-purple-200 relative">
+                            <video controls class="w-full h-full object-cover" poster="https://via.placeholder.com/800x450/d946ef/ffffff?text=Video+Poster+4">
+                                <source src="videos/5.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="p-6">
+                           
+                        </div>
+                    </div>
+
+
+                </div>
             </div>
+
+           
         </div>
-        
-        <!-- Control Panel -->
-        <div class="control-panel">
-            <button class="control-btn" onclick="toggleAutoplay()" id="playBtn">Pause Slideshow</button>
-            <button class="control-btn" onclick="resetSlideshow()">Reset</button>
-            <button class="control-btn" onclick="changeSpeed()" id="speedBtn">Normal Speed</button>
-        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="hidden fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
+        <button id="close-lightbox" class="absolute top-6 right-6 text-white hover:text-purple-400 transition-colors">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <img id="lightbox-img" src="" alt="Lightbox" class="max-w-full max-h-full object-contain rounded-2xl shadow-2xl">
     </div>
 
-    <!-- Fullscreen Modal -->
-    <div class="fullscreen-modal" id="fullscreenModal">
-        <div class="fullscreen-content">
-            <button class="fullscreen-close" onclick="closeFullscreen()">×</button>
-            <img src="" alt="" class="fullscreen-image" id="fullscreenImage">
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col items-center">
+                <div class="flex gap-6 mb-6">
+                    <a href="https://github.com/darellanneb-lab" target="_blank" class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transform hover:scale-110 transition-all duration-300 shadow-lg">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="https://www.facebook.com/darell.bersamira.9" target="_blank" class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transform hover:scale-110 transition-all duration-300 shadow-lg">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </a>
+                    <a href="https://www.instagram.com/xtraordinarell" target="_blank" class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transform hover:scale-110 transition-all duration-300 shadow-lg">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </a>
+                    <a href="https://youtube.com/@darellannebersamira" target="_blank" class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transform hover:scale-110 transition-all duration-300 shadow-lg">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="text-center mb-4">
+                    <p class="text-purple-100 mb-1 font-semibold">darellanneb@gmail.com</p>
+                    <p class="text-purple-100 font-semibold">0936-168-4836</p>
+                </div>
+
+                <div class="text-center text-purple-200 text-sm">
+                    <p>&copy; 2025 Darell-Ann V. Bersamira. All rights reserved.</p>
+                </div>
+            </div>
         </div>
-    </div>
+    </footer>
 
     <script>
-        // Gallery images array (repeating to make 20 images)
-        const images = [
-            'ACT12_BERSAMIRA/g.jpg',
-            'ACT12_BERSAMIRA/b.jpg', 
-            'ACT12_BERSAMIRA/c.jpg',
-            'ACT12_BERSAMIRA/d.jpg',
-            'ACT12_BERSAMIRA/e.jpg',
-            'ACT12_BERSAMIRA/a.jpg',
-            'ACT12_BERSAMIRA/f.jpg',
-            'ACT12_BERSAMIRA/g.jpg',
-            'ACT12_BERSAMIRA/b.jpg',
-            'ACT12_BERSAMIRA/c.jpg',
-            'ACT12_BERSAMIRA/d.jpg',
-            'ACT12_BERSAMIRA/e.jpg',
-            'ACT12_BERSAMIRA/a.jpg',
-            'ACT12_BERSAMIRA/f.jpg',
-            'ACT12_BERSAMIRA/g.jpg',
-            'ACT12_BERSAMIRA/b.jpg',
-            'ACT12_BERSAMIRA/c.jpg',
-            'ACT12_BERSAMIRA/d.jpg',
-            'ACT12_BERSAMIRA/e.jpg',
-            'ACT12_BERSAMIRA/a.jpg'
-        ];
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const closeLightbox = document.getElementById('close-lightbox');
+        const galleryItems = document.querySelectorAll('.group.relative img');
 
-        let currentSlideIndex = 0;
-        let isAutoplay = true;
-        let autoplayInterval;
-        let slideDuration = 4000; // 4 seconds
-        let progressInterval;
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
 
-        // Initialize slideshow
-        function initializeSlideshow() {
-            createSlides();
-            createIndicators();
-            startAutoplay();
-            updateCounter();
-            createParticles();
-        }
-
-        // Create all slides
-        function createSlides() {
-            const slideshowWrapper = document.querySelector('.slideshow-wrapper');
-            const firstSlide = slideshowWrapper.querySelector('.slide');
-            
-            // Remove the first slide
-            firstSlide.remove();
-            
-            images.forEach((imageSrc, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'slide';
-                if (index === 0) slide.classList.add('active');
-                slide.onclick = () => openFullscreen(index);
-                
-                const placeholderSvg = `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjZmYwMDZlIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMjYwIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5JbWFnZSAke2luZGV4ICsgMX08L3RleHQ+Cjwvc3ZnPg==`;
-                
-                slide.innerHTML = `
-                    <img src="${imageSrc}" alt="Gallery Image ${index + 1}" onerror="this.src='${placeholderSvg}'">
-                    <div class="slide-content">
-                        <div class="slide-title">Image ${index + 1}</div>
-                        <div class="slide-description">Beautiful moment captured</div>
-                    </div>
-                `;
-                
-                slideshowWrapper.appendChild(slide);
+        galleryItems.forEach(item => {
+            item.parentElement.addEventListener('click', () => {
+                lightboxImg.src = item.src;
+                lightbox.classList.remove('hidden');
             });
-        }
+        });
 
-        // Create slide indicators
-        function createIndicators() {
-            const indicatorsContainer = document.querySelector('.slide-indicators');
-            indicatorsContainer.innerHTML = '';
-            
-            for (let i = 0; i < images.length; i++) {
-                const indicator = document.createElement('span');
-                indicator.className = 'indicator';
-                if (i === 0) indicator.classList.add('active');
-                indicator.onclick = () => goToSlide(i);
-                indicatorsContainer.appendChild(indicator);
-            }
-        }
+        closeLightbox.addEventListener('click', () => {
+            lightbox.classList.add('hidden');
+        });
 
-        // Change slide
-        function changeSlide(direction) {
-            const slides = document.querySelectorAll('.slide');
-            const indicators = document.querySelectorAll('.indicator');
-            
-            slides[currentSlideIndex].classList.remove('active');
-            indicators[currentSlideIndex].classList.remove('active');
-            
-            currentSlideIndex += direction;
-            
-            if (currentSlideIndex >= images.length) {
-                currentSlideIndex = 0;
-            } else if (currentSlideIndex < 0) {
-                currentSlideIndex = images.length - 1;
-            }
-            
-            slides[currentSlideIndex].classList.add('active');
-            indicators[currentSlideIndex].classList.add('active');
-            
-            updateCounter();
-            resetProgress();
-        }
-
-        // Go to specific slide
-        function goToSlide(index) {
-            const slides = document.querySelectorAll('.slide');
-            const indicators = document.querySelectorAll('.indicator');
-            
-            slides[currentSlideIndex].classList.remove('active');
-            indicators[currentSlideIndex].classList.remove('active');
-            
-            currentSlideIndex = index;
-            
-            slides[currentSlideIndex].classList.add('active');
-            indicators[currentSlideIndex].classList.add('active');
-            
-            updateCounter();
-            resetProgress();
-        }
-
-        // Start autoplay
-        function startAutoplay() {
-            if (autoplayInterval) clearInterval(autoplayInterval);
-            if (progressInterval) clearInterval(progressInterval);
-            
-            autoplayInterval = setInterval(() => {
-                changeSlide(1);
-            }, slideDuration);
-            
-            startProgress();
-        }
-
-        // Toggle autoplay
-        function toggleAutoplay() {
-            isAutoplay = !isAutoplay;
-            const playBtn = document.getElementById('playBtn');
-            const autoplayBtn = document.getElementById('autoplayBtn');
-            
-            if (isAutoplay) {
-                startAutoplay();
-                playBtn.textContent = 'Pause Slideshow';
-                autoplayBtn.textContent = 'Pause';
-            } else {
-                clearInterval(autoplayInterval);
-                clearInterval(progressInterval);
-                playBtn.textContent = 'Play Slideshow';
-                autoplayBtn.textContent = 'Play';
-            }
-        }
-
-        // Start progress bar
-        function startProgress() {
-            const progressBar = document.getElementById('progressBar');
-            let progress = 0;
-            const increment = 100 / (slideDuration / 100);
-            
-            progressInterval = setInterval(() => {
-                progress += increment;
-                progressBar.style.width = Math.min(progress, 100) + '%';
-                
-                if (progress >= 100) {
-                    progress = 0;
-                }
-            }, 100);
-        }
-
-        // Reset progress bar
-        function resetProgress() {
-            const progressBar = document.getElementById('progressBar');
-            progressBar.style.width = '0%';
-            if (isAutoplay) startProgress();
-        }
-
-        // Change speed
-        function changeSpeed() {
-            const speedBtn = document.getElementById('speedBtn');
-            
-            if (slideDuration === 4000) {
-                slideDuration = 2000;
-                speedBtn.textContent = 'Fast Speed';
-            } else if (slideDuration === 2000) {
-                slideDuration = 6000;
-                speedBtn.textContent = 'Slow Speed';
-            } else {
-                slideDuration = 4000;
-                speedBtn.textContent = 'Normal Speed';
-            }
-            
-            if (isAutoplay) {
-                startAutoplay();
-            }
-        }
-
-        // Reset slideshow
-        function resetSlideshow() {
-            goToSlide(0);
-            if (!isAutoplay) {
-                toggleAutoplay();
-            }
-        }
-
-        // Update counter
-        function updateCounter() {
-            document.getElementById('currentSlide').textContent = currentSlideIndex + 1;
-            document.getElementById('totalSlides').textContent = images.length;
-        }
-
-        // Toggle video
-        function toggleVideo() {
-            const video = document.querySelector('.background-video');
-            const videoBtn = document.getElementById('videoBtn');
-            
-            if (video.paused) {
-                video.play();
-                videoBtn.textContent = 'Pause Video';
-            } else {
-                video.pause();
-                videoBtn.textContent = 'Play Video';
-            }
-        }
-
-        // Open fullscreen
-        function openFullscreen(index) {
-            const modal = document.getElementById('fullscreenModal');
-            const fullscreenImage = document.getElementById('fullscreenImage');
-            
-            fullscreenImage.src = images[index];
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        // Close fullscreen
-        function closeFullscreen() {
-            const modal = document.getElementById('fullscreenModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Create floating particles
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 10 + 's';
-                particle.style.animationDuration = (Math.random() * 5 + 8) + 's';
-                particlesContainer.appendChild(particle);
-            }
-        }
-
-        // Keyboard navigation
-        document.addEventListener('keydown', function(e) {
-            const modal = document.getElementById('fullscreenModal');
-            
-            if (modal.classList.contains('active')) {
-                if (e.key === 'Escape') {
-                    closeFullscreen();
-                }
-                return;
-            }
-            
-            switch(e.key) {
-                case 'ArrowLeft':
-                    changeSlide(-1);
-                    break;
-                case 'ArrowRight':
-                    changeSlide(1);
-                    break;
-                case ' ':
-                    e.preventDefault();
-                    toggleAutoplay();
-                    break;
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.add('hidden');
             }
         });
 
-        // Close fullscreen when clicking outside
-        document.getElementById('fullscreenModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeFullscreen();
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !lightbox.classList.contains('hidden')) {
+                lightbox.classList.add('hidden');
             }
         });
 
-        // Initialize on load
-        window.addEventListener('load', initializeSlideshow);
+        // Scroll Reveal Animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
 
-        // Pause slideshow when page is not visible
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden && isAutoplay) {
-                clearInterval(autoplayInterval);
-                clearInterval(progressInterval);
-            } else if (!document.hidden && isAutoplay) {
-                startAutoplay();
-            }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('active');
+                    }, index * 100);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach((el) => {
+            observer.observe(el);
         });
     </script>
 </body>
