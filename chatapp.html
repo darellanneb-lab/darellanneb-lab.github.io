@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purple Chat - Collaborative Messaging</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#9333ea',
+                        secondary: '#a855f7',
+                        accent: '#c084fc',
+                        dark: '#581c87',
+                        darker: '#3b0764',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #9333ea 0%, #c084fc 50%, #a855f7 100%);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #9333ea 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .message-bubble {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .typing-indicator {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .online-indicator {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .chat-item:hover {
+            transform: translateX(4px);
+            transition: all 0.2s ease;
+        }
+        
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+        
+        .messages-container {
+            height: calc(100vh - 240px);
+            overflow-y: auto;
+        }
+        
+        .sidebar {
+            height: calc(100vh - 80px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/95 backdrop-blur-lg shadow-lg z-50 border-b border-purple-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="gradient-bg p-2 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-2xl font-bold text-gradient">Purple Chat</span>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 px-4 py-2 bg-purple-50 rounded-full">
+                        <div class="w-2 h-2 bg-green-500 rounded-full online-indicator"></div>
+                        <span class="text-sm font-semibold text-purple-700" id="current-user">You</span>
+                    </div>
+                    <button onclick="toggleSettings()" class="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Chat Interface -->
+    <div class="pt-16 flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-80 bg-white border-r border-gray-200 sidebar overflow-y-auto">
+            <!-- Search -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="relative">
+                    <input type="text" id="search-chats" onkeyup="filterChats()" placeholder="Search conversations..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500">
+                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- New Chat Button -->
+            <div class="p-4 border-b border-gray-200">
+                <button onclick="openNewChatModal()" class="w-full gradient-bg text-white py-2 rounded-lg font-semibold hover:shadow-lg transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    New Chat
+                </button>
+            </div>
+
+            <!-- Chat List Tabs -->
+            <div class="flex border-b border-gray-200">
+                <button onclick="showChatType('all')" id="tab-all" class="flex-1 py-3 px-4 font-semibold text-purple-700 border-b-2 border-purple-700">
+                    All
+                </button>
+                <button onclick="showChatType('direct')" id="tab-direct" class="flex-1 py-3 px-4 font-semibold text-gray-600 hover:text-purple-700">
+                    Direct
+                </button>
+                <button onclick="showChatType('group')" id="tab-group" class="flex-1 py-3 px-4 font-semibold text-gray-600 hover:text-purple-700">
+                    Groups
+                </button>
+            </div>
+
+            <!-- Chat List -->
+            <div id="chat-list" class="overflow-y-auto">
+                <!-- Chats will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="flex-1 flex flex-col bg-gray-50">
+            <!-- Chat Header -->
+            <div id="chat-header" class="bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <div id="chat-avatar" class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center text-white font-bold text-lg">
+                            💬
+                        </div>
+                        <div id="chat-online" class="w-3 h-3 bg-green-500 rounded-full absolute bottom-0 right-0 border-2 border-white hidden"></div>
+                    </div>
+                    <div>
+                        <h2 id="chat-name" class="font-bold text-gray-900 text-lg">Select a conversation</h2>
+                        <p id="chat-status" class="text-sm text-gray-500">No chat selected</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="toggleChatInfo()" class="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div id="messages-area" class="flex-1 overflow-y-auto p-6 messages-container scroll-smooth">
+                <div class="text-center text-gray-500 py-20">
+                    <svg class="w-20 h-20 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <p class="text-lg font-semibold">Select a chat to start messaging</p>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div id="typing-indicator" class="hidden px-6 py-2">
+                <div class="flex items-center gap-2 text-gray-500 text-sm typing-indicator">
+                    <div class="flex gap-1">
+                        <div class="w-2 h-2 bg-gray-400 rounded-full" style="animation: pulse 1.5s ease-in-out infinite"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full" style="animation: pulse 1.5s ease-in-out infinite 0.2s"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full" style="animation: pulse 1.5s ease-in-out infinite 0.4s"></div>
+                    </div>
+                    <span id="typing-user"></span> is typing...
+                </div>
+            </div>
+
+            <!-- Message Input -->
+            <div class="bg-white border-t border-gray-200 p-4">
+                <div class="flex items-end gap-3">
+                    <button onclick="document.getElementById('file-input').click()" class="p-3 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                        </svg>
+                    </button>
+                    <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event)">
+                    
+                    <div class="flex-1 relative">
+                        <textarea id="message-input" placeholder="Type a message..." rows="1" onkeydown="handleMessageKeydown(event)" oninput="autoResize(this)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 resize-none max-h-32"></textarea>
+                        <div id="file-preview" class="hidden absolute bottom-full left-0 right-0 mb-2 p-3 bg-white border border-gray-300 rounded-lg shadow-lg">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <div>
+                                        <p id="file-name" class="text-sm font-semibold text-gray-900"></p>
+                                        <p id="file-size" class="text-xs text-gray-500"></p>
+                                    </div>
+                                </div>
+                                <button onclick="clearFile()" class="text-red-600 hover:bg-red-50 p-1 rounded">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="sendMessage()" class="gradient-bg text-white p-3 rounded-lg font-semibold hover:shadow-lg transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Chat Modal -->
+    <div id="new-chat-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900">New Conversation</h3>
+                <button onclick="closeNewChatModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="flex gap-2 mb-4">
+                    <button onclick="setChatType('direct')" id="type-direct" class="flex-1 py-2 px-4 border-2 border-purple-600 text-purple-600 rounded-lg font-semibold">
+                        Direct Message
+                    </button>
+                    <button onclick="setChatType('group')" id="type-group" class="flex-1 py-2 px-4 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-purple-600 hover:text-purple-600">
+                        Group Chat
+                    </button>
+                </div>
+
+                <div id="direct-options">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Select User</label>
+                    <select id="new-chat-user" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500">
+                        <option value="Alice">Alice Johnson</option>
+                        <option value="Bob">Bob Smith</option>
+                        <option value="Charlie">Charlie Brown</option>
+                        <option value="Diana">Diana Prince</option>
+                        <option value="Eve">Eve Wilson</option>
+                    </select>
+                </div>
+
+                <div id="group-options" class="hidden">
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Group Name</label>
+                        <input type="text" id="group-name" placeholder="Enter group name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Select Members</label>
+                        <div class="space-y-2 max-h-48 overflow-y-auto">
+                            <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" value="Alice" class="group-member">
+                                <span>Alice Johnson</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" value="Bob" class="group-member">
+                                <span>Bob Smith</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" value="Charlie" class="group-member">
+                                <span>Charlie Brown</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" value="Diana" class="group-member">
+                                <span>Diana Prince</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input type="checkbox" value="Eve" class="group-member">
+                                <span>Eve Wilson</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 pt-4">
+                    <button onclick="createNewChat()" class="flex-1 gradient-bg text-white py-3 rounded-full font-bold hover:shadow-lg transition">
+                        Start Chat
+                    </button>
+                    <button onclick="closeNewChatModal()" class="px-6 py-3 border border-gray-300 rounded-full font-semibold hover:bg-gray-50 transition">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentChatId = null;
+        let currentChatType = 'all';
+        let newChatType = 'direct';
+        let selectedFile = null;
+
+        const users = {
+            'Alice': { name: 'Alice Johnson', status: 'online', avatar: '👩‍💼', lastSeen: 'Online' },
+            'Bob': { name: 'Bob Smith', status: 'online', avatar: '👨‍💻', lastSeen: 'Online' },
+            'Charlie': { name: 'Charlie Brown', status: 'away', avatar: '👨‍🎨', lastSeen: '5 min ago' },
+            'Diana': { name: 'Diana Prince', status: 'online', avatar: '👩‍🔬', lastSeen: 'Online' },
+            'Eve': { name: 'Eve Wilson', status: 'offline', avatar: '👩‍🚀', lastSeen: '2 hours ago' }
+        };
+
+        let chats = [
+            {
+                id: 1,
+                type: 'direct',
+                name: 'Alice Johnson',
+                user: 'Alice',
+                avatar: '👩‍💼',
+                status: 'online',
+                lastMessage: 'Hey! How are you doing?',
+                lastTime: '2 min ago',
+                unread: 2,
+                messages: [
+                    { id: 1, sender: 'Alice', text: 'Hi there! 👋', time: '10:30 AM', type: 'text' },
+                    { id: 2, sender: 'You', text: 'Hello Alice! How can I help you?', time: '10:31 AM', type: 'text' },
+                    { id: 3, sender: 'Alice', text: 'Hey! How are you doing?', time: '10:35 AM', type: 'text' }
+                ]
+            },
+            {
+                id: 2,
+                type: 'group',
+                name: 'Project Team',
+                members: ['Alice', 'Bob', 'Charlie'],
+                avatar: '👥',
+                lastMessage: 'Bob: Meeting at 3 PM',
+                lastTime: '15 min ago',
+                unread: 5,
+                messages: [
+                    { id: 1, sender: 'Alice', text: 'Good morning team!', time: '9:00 AM', type: 'text' },
+                    { id: 2, sender: 'Bob', text: 'Morning! Ready for today\'s sprint', time: '9:05 AM', type: 'text' },
+                    { id: 3, sender: 'Charlie', text: 'Let\'s crush it! 💪', time: '9:10 AM', type: 'text' },
+                    { id: 4, sender: 'Bob', text: 'Meeting at 3 PM', time: '9:30 AM', type: 'text' }
+                ]
+            },
+            {
+                id: 3,
+                type: 'direct',
+                name: 'Bob Smith',
+                user: 'Bob',
+                avatar: '👨‍💻',
+                status: 'online',
+                lastMessage: 'Check out this file',
+                lastTime: '1 hour ago',
+                unread: 0,
+                messages: [
+                    { id: 1, sender: 'Bob', text: 'I have the design files ready', time: 'Yesterday', type: 'text' },
+                    { id: 2, sender: 'You', text: 'Great! Send them over', time: 'Yesterday', type: 'text' },
+                    { id: 3, sender: 'Bob', text: 'Check out this file', time: '2:30 PM', type: 'text' },
+                    { id: 4, sender: 'Bob', text: 'design-mockup.fig', time: '2:30 PM', type: 'file', fileName: 'design-mockup.fig', fileSize: '2.4 MB' }
+                ]
+            }
+        ];
+
+        let nextChatId = 4;
+        let nextMessageId = 100;
+
+        function init() {
+            renderChatList();
+        }
+
+        function renderChatList() {
+            const filteredChats = currentChatType === 'all' ? chats : 
+                                 chats.filter(c => c.type === currentChatType);
+            
+            const searchTerm = document.getElementById('search-chats').value.toLowerCase();
+            const searchFiltered = filteredChats.filter(c => 
+                c.name.toLowerCase().includes(searchTerm)
+            );
+
+            const chatListHTML = searchFiltered.map(chat => {
+                const statusColor = chat.type === 'direct' && users[chat.user]?.status === 'online' ? 'bg-green-500' : 'bg-gray-300';
+                return `
+                    <div onclick="selectChat(${chat.id})" class="chat-item p-4 border-b border-gray-200 hover:bg-purple-50 cursor-pointer transition ${currentChatId === chat.id ? 'bg-purple-50' : ''}">
+                        <div class="flex gap-3">
+                            <div class="relative">
+                                <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center text-2xl">
+                                    ${chat.avatar}
+                                </div>
+                                ${chat.type === 'direct' ? `<div class="w-3 h-3 ${statusColor} rounded-full absolute bottom-0 right-0 border-2 border-white"></div>` : ''}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start mb-1">
+                                    <h3 class="font-bold text-gray-900 truncate">${chat.name}</h3>
+                                    <span class="text-xs text-gray-500 flex-shrink-0">${chat.lastTime}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <p class="text-sm text-gray-600 truncate">${chat.lastMessage}</p>
+                                    ${chat.unread > 0 ? `<span class="gradient-bg text-white text-xs px-2 py-1 rounded-full font-bold ml-2 flex-shrink-0">${chat.unread}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('chat-list').innerHTML = chatListHTML || '<p class="text-center text-gray-500 py-8">No chats found</p>';
+        }
+
+        function selectChat(chatId) {
+            currentChatId = chatId;
+            const chat = chats.find(c => c.id === chatId);
+            if (!chat) return;
+
+            // Mark as read
+            chat.unread = 0;
+            renderChatList();
+
+            // Update header
+            document.getElementById('chat-avatar').textContent = chat.avatar;
+            document.getElementById('chat-name').textContent = chat.name;
+            
+            if (chat.type === 'direct') {
+                const user = users[chat.user];
+                document.getElementById('chat-status').textContent = user.lastSeen;
+                if (user.status === 'online') {
+                    document.getElementById('chat-online').classList.remove('hidden');
+                } else {
+                    document.getElementById('chat-online').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('chat-status').textContent = `${chat.members.length} members`;
+                document.getElementById('chat-online').classList.add('hidden');
+            }
+
+            // Render messages
+            renderMessages(chat);
+
+            // Simulate typing indicator occasionally
+            if (Math.random() > 0.7) {
+                showTypingIndicator(chat);
+            }
+        }
+
+        function renderMessages(chat) {
+            const messagesHTML = chat.messages.map(msg => {
+                const isOwn = msg.sender === 'You';
+                const alignment = isOwn ? 'justify-end' : 'justify-start';
+                const bgColor = isOwn ? 'gradient-bg text-white' : 'bg-white';
+                const senderName = !isOwn && chat.type === 'group' ? `<p class="text-xs font-semibold text-purple-600 mb-1">${msg.sender}</p>` : '';
+
+                if (msg.type === 'file') {
+                    return `
+                        <div class="flex ${alignment} mb-4 message-bubble">
+                            <div class="max-w-md">
+                                ${senderName}
+                                <div class="${bgColor} px-4 py-3 rounded-2xl shadow-md">
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-8 h-8 ${isOwn ? 'text-white' : 'text-purple-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <div class="flex-1">
+                                            <p class="font-semibold text-sm">${msg.fileName}</p>
+                                            <p class="text-xs opacity-75">${msg.fileSize}</p>
+                                        </div>
+                                        <button class="p-2 ${isOwn ? 'hover:bg-purple-700' : 'hover:bg-gray-100'} rounded-lg transition">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <p class="text-xs opacity-75 mt-2">${msg.time}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="flex ${alignment} mb-4 message-bubble">
+                        <div class="max-w-md">
+                            ${senderName}
+                            <div class="${bgColor} px-4 py-3 rounded-2xl shadow-md">
+                                <p class="text-sm">${msg.text}</p>
+                                <p class="text-xs opacity-75 mt-1">${msg.time}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('messages-area').innerHTML = messagesHTML;
+            scrollToBottom();
+        }
+
+        function showTypingIndicator(chat) {
+            const randomUser = chat.type === 'group' ? 
+                chat.members[Math.floor(Math.random() * chat.members.length)] : 
+                chat.user;
+            
+            document.getElementById('typing-user').textContent = randomUser;
+            document.getElementById('typing-indicator').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('typing-indicator').classList.add('hidden');
+            }, 3000);
+        }
+
+        function scrollToBottom() {
+            const messagesArea = document.getElementById('messages-area');
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            
+            if (!text && !selectedFile) return;
+            if (!currentChatId) {
+                alert('Please select a chat first');
+                return;
+            }
+
+            const chat = chats.find(c => c.id === currentChatId);
+            if (!chat) return;
+
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+            if (selectedFile) {
+                // Send file message
+                const fileMessage = {
+                    id: nextMessageId++,
+                    sender: 'You',
+                    text: text || 'Sent a file',
+                    time: time,
+                    type: 'file',
+                    fileName: selectedFile.name,
+                    fileSize: formatFileSize(selectedFile.size)
+                };
+                chat.messages.push(fileMessage);
+                chat.lastMessage = `You: ${selectedFile.name}`;
+                clearFile();
+            } else {
+                // Send text message
+                const message = {
+                    id: nextMessageId++,
+                    sender: 'You',
+                    text: text,
+                    time: time,
+                    type: 'text'
+                };
+                chat.messages.push(message);
+                chat.lastMessage = `You: ${text.substring(0, 30)}${text.length > 30 ? '...' : ''}`;
+            }
+
+            chat.lastTime = 'Just now';
+            
+            input.value = '';
+            input.style.height = 'auto';
+            
+            renderMessages(chat);
+            renderChatList();
+
+            // Simulate response
+            setTimeout(() => {
+                simulateResponse(chat);
+            }, 2000);
+        }
+
+        function simulateResponse(chat) {
+            const responses = [
+                "That's great to hear!",
+                "Thanks for sharing!",
+                "I'll take a look at that",
+                "Sounds good 👍",
+                "Let me know if you need anything",
+                "Perfect, thanks!",
+                "Got it!",
+                "Will do!"
+            ];
+
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+            const sender = chat.type === 'group' ? 
+                chat.members[Math.floor(Math.random() * chat.members.length)] : 
+                chat.user;
+
+            const message = {
+                id: nextMessageId++,
+                sender: sender,
+                text: randomResponse,
+                time: time,
+                type: 'text'
+            };
+
+            chat.messages.push(message);
+            chat.lastMessage = `${sender}: ${randomResponse}`;
+            chat.lastTime = 'Just now';
+
+            if (currentChatId === chat.id) {
+                renderMessages(chat);
+            } else {
+                chat.unread++;
+            }
+            
+            renderChatList();
+        }
+
+        function handleMessageKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 128) + 'px';
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            selectedFile = file;
+            document.getElementById('file-name').textContent = file.name;
+            document.getElementById('file-size').textContent = formatFileSize(file.size);
+            document.getElementById('file-preview').classList.remove('hidden');
+        }
+
+        function clearFile() {
+            selectedFile = null;
+            document.getElementById('file-input').value = '';
+            document.getElementById('file-preview').classList.add('hidden');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function showChatType(type) {
+            currentChatType = type;
+            
+            // Update tab styles
+            document.getElementById('tab-all').className = 'flex-1 py-3 px-4 font-semibold text-gray-600 hover:text-purple-700';
+            document.getElementById('tab-direct').className = 'flex-1 py-3 px-4 font-semibold text-gray-600 hover:text-purple-700';
+            document.getElementById('tab-group').className = 'flex-1 py-3 px-4 font-semibold text-gray-600 hover:text-purple-700';
+            
+            document.getElementById(`tab-${type}`).className = 'flex-1 py-3 px-4 font-semibold text-purple-700 border-b-2 border-purple-700';
+            
+            renderChatList();
+        }
+
+        function filterChats() {
+            renderChatList();
+        }
+
+        function openNewChatModal() {
+            document.getElementById('new-chat-modal').classList.remove('hidden');
+        }
+
+        function closeNewChatModal() {
+            document.getElementById('new-chat-modal').classList.add('hidden');
+            document.getElementById('group-name').value = '';
+            document.querySelectorAll('.group-member').forEach(cb => cb.checked = false);
+        }
+
+        function setChatType(type) {
+            newChatType = type;
+            
+            if (type === 'direct') {
+                document.getElementById('type-direct').className = 'flex-1 py-2 px-4 border-2 border-purple-600 text-purple-600 rounded-lg font-semibold';
+                document.getElementById('type-group').className = 'flex-1 py-2 px-4 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-purple-600 hover:text-purple-600';
+                document.getElementById('direct-options').classList.remove('hidden');
+                document.getElementById('group-options').classList.add('hidden');
+            } else {
+                document.getElementById('type-group').className = 'flex-1 py-2 px-4 border-2 border-purple-600 text-purple-600 rounded-lg font-semibold';
+                document.getElementById('type-direct').className = 'flex-1 py-2 px-4 border-2 border-gray-300 text-gray-600 rounded-lg font-semibold hover:border-purple-600 hover:text-purple-600';
+                document.getElementById('direct-options').classList.add('hidden');
+                document.getElementById('group-options').classList.remove('hidden');
+            }
+        }
+
+        function createNewChat() {
+            if (newChatType === 'direct') {
+                const userName = document.getElementById('new-chat-user').value;
+                
+                // Check if chat already exists
+                const existingChat = chats.find(c => c.type === 'direct' && c.user === userName);
+                if (existingChat) {
+                    selectChat(existingChat.id);
+                    closeNewChatModal();
+                    return;
+                }
+
+                const user = users[userName];
+                const newChat = {
+                    id: nextChatId++,
+                    type: 'direct',
+                    name: user.name,
+                    user: userName,
+                    avatar: user.avatar,
+                    status: user.status,
+                    lastMessage: 'Start a conversation',
+                    lastTime: 'Now',
+                    unread: 0,
+                    messages: []
+                };
+
+                chats.unshift(newChat);
+                renderChatList();
+                selectChat(newChat.id);
+            } else {
+                const groupName = document.getElementById('group-name').value.trim();
+                const selectedMembers = Array.from(document.querySelectorAll('.group-member:checked')).map(cb => cb.value);
+
+                if (!groupName) {
+                    alert('Please enter a group name');
+                    return;
+                }
+
+                if (selectedMembers.length === 0) {
+                    alert('Please select at least one member');
+                    return;
+                }
+
+                const newChat = {
+                    id: nextChatId++,
+                    type: 'group',
+                    name: groupName,
+                    members: selectedMembers,
+                    avatar: '👥',
+                    lastMessage: 'Group created',
+                    lastTime: 'Now',
+                    unread: 0,
+                    messages: [
+                        {
+                            id: nextMessageId++,
+                            sender: 'System',
+                            text: `You created group "${groupName}"`,
+                            time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+                            type: 'text'
+                        }
+                    ]
+                };
+
+                chats.unshift(newChat);
+                renderChatList();
+                selectChat(newChat.id);
+            }
+
+            closeNewChatModal();
+        }
+
+        function toggleSettings() {
+            alert('Settings panel coming soon!');
+        }
+
+        function toggleChatInfo() {
+            alert('Chat info panel coming soon!');
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
